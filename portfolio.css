@@ -291,6 +291,10 @@ form input, form textarea{
     cursor: pointer;
 }
 
+.btn.btn2{
+    display: inline-block;
+}
+
 
 .btn:hover::after{
     transition: transform 0.5s;
