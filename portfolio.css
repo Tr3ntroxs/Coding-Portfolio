@@ -388,6 +388,7 @@ form input, form textarea{
     }
 
     .contact-left p{
+        visibility: visible;
         font-size: 16px;
     }
     
