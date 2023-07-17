@@ -223,6 +223,7 @@ span{
 .contact-left p{
     color: #fff;
     margin-top: 30px;
+    font-size: 20px;
 }
 
 .contact-left p i{
@@ -384,6 +385,14 @@ form input, form textarea{
 
     nav .submenus.open{
         right: 0;
+    }
+
+    .contact-left p{
+        font-size: 16px;
+    }
+    
+    .contact-left p i{
+        font-size: 24px;
     }
 }
 
