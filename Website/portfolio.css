@@ -9,6 +9,10 @@
     color: black;
 }
 
+html{
+    scroll-behavior: smooth;
+}
+
 .body{
     overflow-x: hidden;
 }
@@ -324,7 +328,9 @@ form input, form textarea{
     display: flex;
 } */
 
-@media screen and (max-width: 930px) {
+/*--------css styles for differently sized screens-----------*/
+
+@media only screen and (max-width: 930px) {
     nav .hamb{
         display: initial;
     }
