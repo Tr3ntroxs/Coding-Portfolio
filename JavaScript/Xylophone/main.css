@@ -1,0 +1,77 @@
+* {
+    margin: 0;
+    padding: 0;
+  }
+  
+  html,
+  body {
+    height: 100vh;
+    background-color:rgba(0, 0, 0, 1);
+  }
+  
+  .red {
+    background-color: red;
+    height: 90%;
+    margin-top: 5%;
+  }
+  
+  .orange {
+    background-color: orange;
+    height: 80%;
+    margin-top: 10%;
+  }
+  
+  .yellow {
+    background-color: yellow;
+    height: 70%;
+    margin-top: 15%;
+  }
+  
+  .green {
+    background-color: green;
+    height: 60%;
+    margin-top: 20%;
+  }
+  
+  .teal {
+    background-color: teal;
+    height: 50%;
+    margin-top: 25%;
+  }
+  
+  .blue {
+    background-color: darkblue;
+    height: 40%;
+    margin-top: 30%;
+  }
+  
+  .purple {
+    background-color: purple;
+    height: 30%;
+    margin-top: 35%;
+  }
+  
+  #notes {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 50%;
+    margin-left: 25%;
+    column-gap: 10px;
+  }
+  
+  #notes button {
+    flex: 1;
+    cursor: pointer;
+    border: none;
+    outline: none;
+    font-size: 3rem;
+    color: white;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+  }
+  
+  @media (min-width: 600px) {
+    #notes {
+      flex-direction: row;
+    }
+  }
