@@ -7,17 +7,16 @@ public class Account {
 
     private ArrayList<String> pwds = new ArrayList<String>();
     private ArrayList<String> notes = new ArrayList<String>();
-    private String pwd_decrypted;
 
     Account(String new_username, String new_password){
         username = new_username;
         password = new_password;
         notes = new ArrayList<String>();
-
     }
 
     public ArrayList<String> get_pwds(){
-
+        // Decrypt pwds before returning
+        return pwds;
     }
 
     public ArrayList<String> get_notes(){
@@ -29,7 +28,8 @@ public class Account {
     }
 
     public String encrypt(String p){
-
+        String encryption = p;
+        return encryption
     }
 
 }
