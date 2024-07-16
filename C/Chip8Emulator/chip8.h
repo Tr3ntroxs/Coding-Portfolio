@@ -126,7 +126,16 @@ typedef struct chip8{
             std::to_string(current_opcode));
         }
 
-        // TODO: Update sound and delay timers. 
+        if(delay_timer > 0){
+            --delay_timer;
+        }
+
+        if(sound_timer > 0){
+            if(sound_timer == 1){
+                printf("BEEP!\n");
+            }
+            --sound_timer;
+        }
     };
 
     void build_instruction_set(){
@@ -137,7 +146,7 @@ typedef struct chip8{
 
         // 
         instructions[0x00E0] = [this]() {
-            frame.SetAll(0);
+            .SetAll(0); //////////////////////////////////////////
             pc += 2;
         };
 
@@ -146,6 +155,7 @@ typedef struct chip8{
             pc = stack[--sp] + 2;
         };
 
+        // Main emulation cycle
         for(int opcode = 0x1000; opcode < 0xFFFF; opcode++){
 
             uint16_t nnn =  opcode & 0x0FFF;
@@ -162,10 +172,27 @@ typedef struct chip8{
         }
     };
 
+    // 0nnn
+    Instruction GenSYS(uint16_t addr) {
+        
+    }; 
+
+    // 00E0
+    Instruction GenCLS() {
+        
+    };
+
+    // 00EE
+    Instruction GenRET() {
+        
+    };
+
+    // 1nnn
     Instruction GenJP(uint16_t addr) {
         return [this, addr]() {  pc = addr; };
     };
 
+    // 2nnn
     Instruction GenCALL(uint16_t addr) {
         return [this, addr]() {
             stack[sp++] = pc;
@@ -173,12 +200,24 @@ typedef struct chip8{
         };
     };
 
+    // 3xkk, 5xy0
     Instruction GenSE(uint8_t reg, uint8_t val) {
         return [this, reg, val]() {
             V[reg] == val ? (pc += 4) : (pc += 2);
         };
     };
 
+    // 4xkk, 9xy0
+    Instruction GenSNE(uint8_t reg, uint8_t val) {
+        
+    };
+
+    // 6xkk
+    Instruction GenLD(uint8_t reg_x, uint8_t val) {
+        
+    };
+
+    // 7xkk, 8xy4, Fx1E         SPLIT BY METHOD FIRST OR IF-ELSE GATES ONLY?
     Instruction GenADD(uint8_t reg_x, uint8_t reg_y) {
         return [this, reg_x, reg_y]() {
             uint16_t res = V[reg_x] += V[reg_y];
@@ -188,6 +227,22 @@ typedef struct chip8{
         };
     };
 
+    // 8xy1
+    Instruction GenOR(uint8_t reg_x, uint8_t reg_y) {
+
+    }
+
+    // 8xy2
+    Instruction GenAND(uint8_t reg_x, uint8_t reg_y) {
+
+    }
+
+    // 8xy3
+    Instruction GenXOR(uint8_t reg_x, uint8_t reg_y) {
+
+    }
+
+    // 8xy5
     Instruction GenSUB(uint8_t reg_x, uint8_t reg_y) {
         return [this, reg_x, reg_y]() {
             V[0xF] = V[reg_x] > V[reg_y]; // set not borrow flag
@@ -196,14 +251,93 @@ typedef struct chip8{
         };
     };
 
+    // 8xy6
+    Instruction GenSHR(uint8_t reg_x, uint8_t reg_y) { // array?
+
+    }
+
+    // 8xy7
+    Instruction GenSUBN(uint8_t reg_x, uint8_t reg_y) {
+
+    }
+
+    // 8xyE
+    Instruction GenSHL(uint8_t reg_x, uint8_t reg_y) { // array?
+
+    }
+
+    // Annn?
     Instruction GenLDSPRITE(uint8_t reg) {
         return [this, reg]() {
             uint8_t digit = V[reg];
             I = 0x50 + (5 * digit);
             pc += 2;
         };
-    }
+    };
 
+    // Bnnn
+    Instruction GenJP(uint8_t reg, uint16_t addr) {
+        
+    };
+
+    // Cxkk
+    Instruction GenRND(uint8_t x, uint8_t n) {
+        
+    };
+
+    // Dxyn
+    Instruction GenDRW(uint8_t reg_x, uint8_t reg_y, uint8_t n) {
+
+    };
+
+    // Ex9E
+    Instruction GenSKP(uint8_t reg_x) {
+
+    };
+
+    // ExA1
+    Instruction GenSKNP(uint8_t reg_x) {
+
+    };
+
+
+
+    // Fx07
+    Instruction GenSETVDL(uint8_t reg, uint8_t delay_timer) {
+
+    };
+
+    // Fx0A   ??????????
+    Instruction GenLD(uint8_t reg_x) {
+
+    };
+
+    // Fx15
+    Instruction GenSETDLV(uint8_t reg, uint8_t delay_timer) {
+
+    };
+
+    // Fx18
+    Instruction GenSETSTV(uint8_t reg_x) {
+
+    };
+
+    // Fx1E
+    Instruction GenSETSTV(uint8_t reg_x) {
+
+    };
+
+    // Fx29
+    Instruction GenSETSTV(uint8_t reg_x) {
+
+    };
+
+    // Fx33
+    Instruction GenSETSTV(uint8_t reg_x) {
+
+    };
+
+    // Fx55
     Instruction GenSTREG(uint8_t reg) {
         return [this, reg]() {
             for (uint8_t v = 0; v <= reg; v++) {
@@ -211,8 +345,9 @@ typedef struct chip8{
             }
             pc += 2;
         };
-    }
+    };
 
+    // Fx65
     Instruction GenLDREG(uint8_t reg) {
         return [this, reg]() {
             for (uint8_t v = 0; v <= reg; v++) {
@@ -220,6 +355,6 @@ typedef struct chip8{
             }
             pc += 2;
         };
-    }
+    };
 
 } chip8;
