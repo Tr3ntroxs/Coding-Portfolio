@@ -67,14 +67,11 @@ html{
     font-size: 30px;
     margin-right: 15px;
     display: inline-block;
-}
-
-.social a i{
     color: #ababab;
     transition: transform 0.5s;
 }
 
-.social a i:hover{
+.social a:hover{
     color: #2ecc71;
     transform: translateY(-5px);
 }
