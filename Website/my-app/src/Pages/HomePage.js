@@ -1,3 +1,4 @@
+// Styling
 import "./HomePage.css";
 
 // Services
@@ -6,18 +7,30 @@ import { send } from "emailjs-com";
 // Hooks
 import React, { useState } from 'react';
 
+// Components
+import ImageSlider from "../Components/imageslider";
+
 // Assets
 import { FaPaperPlane, FaYoutube, FaInstagram, FaLinkedinIn } from "react-icons/fa";
 import { ImPhone } from "react-icons/im";
 
 export default function HomePage() {
 
+    // Slides example
+    const slides = [
+        {url: 'http://localhost:3000/image-1.jpg', title: 'Test1'},
+        {url: 'http://localhost:3000/image-2.jpg', title: 'Test2'},
+        {url: 'http://localhost:3000/image-3.jpg', title: 'Test3'}
+    ]
+
+    // Content of message
     const [toSend, setToSend] = useState({
         from_name: '',
         message: '',
         reply_to: '',
     });
 
+    // Send behavior
     const onSubmit = (e) => {
         e.preventDefault();
         send(
@@ -34,6 +47,7 @@ export default function HomePage() {
             });
     };
 
+    // Send function
     const handleChange = (e) => {
         setToSend({ ...toSend, [e.target.name]: e.target.value });
     };
@@ -41,7 +55,7 @@ export default function HomePage() {
     return (
         <div className="page">
             <h1>Limitations are rules meant to be broken</h1>
-            
+            <ImageSlider slides={slides}></ImageSlider>
             <img src={require("../Images/background.jpg")}></img>
 
 
