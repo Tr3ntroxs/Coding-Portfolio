@@ -59,11 +59,12 @@ html{
 }
 
 .details{
-    margin: 48px;
+    margin: 36px;
 }
 
 .details p{
-    font-family: 'Montserrat';
+    font-family: "Alfa Slab One", serif;
+    font-size: 16px;
 }
 
 /* .promo{
