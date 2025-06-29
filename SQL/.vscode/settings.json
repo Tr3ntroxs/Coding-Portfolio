@@ -1,0 +1,44 @@
+{
+    "sqltools.connections": [
+        {
+            "previewLimit": 50,
+            "driver": "SQLite",
+            "name": "lite",
+            "database": "main.db"
+        },
+        {
+            "mysqlOptions": {
+                "authProtocol": "default",
+                "enableSsl": "Disabled"
+            },
+            "previewLimit": 50,
+            "server": "localhost",
+            "port": 3306,
+            "driver": "MySQL",
+            "database": "mysql",
+            "username": "root",
+            "connectionTimeout": 30,
+            "name": "MySQL",
+            "password": "TryLogging1n!"
+        },
+        {
+            "authenticator": "SNOWFLAKE",
+            "ocspOptions": {
+                "ocspFailOpen": true
+            },
+            "snowflakeOptions": {
+                "clientSessionKeepAlive": true,
+                "clientSessionKeepAliveHeartbeatFrequency": 3600
+            },
+            "previewLimit": 50,
+            "driver": "Snowflake",
+            "username": "NUMBERCRUNCHER",
+            "password": "2GAjNZXcZXrf,Kwp",
+            "database": "SNOWFLAKE_LEARNING_DB",
+            "name": "Snowflake",
+            "warehouse": "SNOWFLAKE_LEARNING_WH",
+            "account": "UIBNWWO-ZY14645"
+        }
+    ],
+    "sqltools.useNodeRuntime": true
+}
