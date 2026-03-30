@@ -29,6 +29,7 @@ int main(int argc, char **argv)
 
         bool quit = false;
         while (!quit) {
+            quit = cpu.pollInput();
 
             const auto now = std::chrono::steady_clock::now();
             const auto frame_delta = now - previous;
@@ -46,6 +47,8 @@ int main(int argc, char **argv)
                 cpu.tickTimers();
                 timer_accumulator -= timer_step;
             }
+
+            cpu.renderConsole();
 
             std::this_thread::sleep_for(std::chrono::milliseconds(1));
         }

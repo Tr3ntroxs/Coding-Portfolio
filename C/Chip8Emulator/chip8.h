@@ -57,23 +57,61 @@ struct chip8 {
     std::mt19937 rng{std::random_device{}()};
     std::uniform_int_distribution<uint16_t> random_byte{0, 255};
 
+    // Console input/render support (no SDL).
+    bool console_render_enabled = true;
 
+    bool terminal_input_inited = false;
+#ifndef _WIN32
+    termios original_termios{};
+#endif
 
-        for(int opcode = 0x1000; opcode < 0xFFFF; opcode++){
     // Key state is "momentary" (set for one poll tick). Terminals don't provide key-up events.
     std::chrono::steady_clock::time_point last_draw_ts = std::chrono::steady_clock::now();
 
-
-        }
-
-
-
-
+    ~chip8() {
+        shutdownTerminalInput();
     }
 
-    // 8xy3
-    Instruction GenXOR(uint8_t reg_x, uint8_t reg_y) {
+    bool initTerminalInput() {
+        if (terminal_input_inited) {
+            return true;
+        }
 
+#ifdef _WIN32
+        terminal_input_inited = true;
+        return true;
+#else
+        if (tcgetattr(STDIN_FILENO, &original_termios) != 0) {
+            std::perror("tcgetattr");
+            return false;
+        }
+
+        termios raw = original_termios;
+        raw.c_lflag = static_cast<tcflag_t>(raw.c_lflag & ~(ICANON | ECHO));
+        raw.c_cc[VMIN] = 0;
+        raw.c_cc[VTIME] = 0;
+
+        if (tcsetattr(STDIN_FILENO, TCSANOW, &raw) != 0) {
+            std::perror("tcsetattr");
+            return false;
+        }
+
+        terminal_input_inited = true;
+        return true;
+#endif
+    }
+
+    void shutdownTerminalInput() {
+        if (!terminal_input_inited) {
+            return;
+        }
+
+#ifdef _WIN32
+        terminal_input_inited = false;
+#else
+        tcsetattr(STDIN_FILENO, TCSANOW, &original_termios);
+        terminal_input_inited = false;
+#endif
     }
 
     void initialize(const std::string& rom_path) {
@@ -427,8 +465,21 @@ struct chip8 {
     bool pollInput() {
         std::memset(key, 0, sizeof(key));
 
+        if (!terminal_input_inited) {
+            // If caller forgot to init, still function in a best-effort way.
+            // On POSIX this will be line-buffered; on Windows _kbhit won't work.
+        }
 
+        auto handleChar = [&](char ch) -> bool {
+            // Quit on ESC.
+            if (static_cast<unsigned char>(ch) == 27) {
+                return true;
+            }
 
+            // Optional quit convenience without consuming keypad keys.
+            if (ch == '`' || ch == '~') {
+                return true;
+            }
 
             const uint8_t k = mapCharToKey(ch);
             if (k != 0xFF) {
@@ -437,9 +488,54 @@ struct chip8 {
             return false;
         };
 
+#ifdef _WIN32
+        while (_kbhit()) {
+            const int v = _getch();
+            if (v == 0 || v == 224) {
+                // Special key prefix; consume the next byte.
+                (void)_getch();
+                continue;
             }
+            if (handleChar(static_cast<char>(v))) {
+                return true;
+            }
+        }
+        return false;
+#else
+        fd_set set;
+        FD_ZERO(&set);
+        FD_SET(STDIN_FILENO, &set);
+
+        timeval timeout;
+        timeout.tv_sec = 0;
+        timeout.tv_usec = 0;
+
+        while (select(STDIN_FILENO + 1, &set, nullptr, nullptr, &timeout) > 0 && FD_ISSET(STDIN_FILENO, &set)) {
+            char ch = 0;
+            const ssize_t nread = read(STDIN_FILENO, &ch, 1);
+            if (nread <= 0) {
+                break;
+            }
+            if (handleChar(ch)) {
+                return true;
+            }
+
+            FD_ZERO(&set);
+            FD_SET(STDIN_FILENO, &set);
+            timeout.tv_sec = 0;
+            timeout.tv_usec = 0;
+        }
+        return false;
+#endif
     }
 
+    // Minimal console renderer: prints 64x32 as ASCII when draw_flag is set.
+    // Uses ANSI escape codes to keep it to a single terminal "frame".
+    void renderConsole() {
+        if (!console_render_enabled || !draw_flag) {
+            return;
+        }
+        draw_flag = false;
 
         // Throttle a bit so we don't spam the terminal if CPU is very fast.
         const auto now = std::chrono::steady_clock::now();
